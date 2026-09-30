@@ -1,25 +1,10 @@
-import logo from './logo.svg';
-import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import { getTrending } from "./api/tmdb";
+
+export default function App() {
+  getTrending()
+    .then((r) => console.log(r.data.results[0]))
+    .catch((e) => console.log("Error:", e.message));
+  return <h1 style={{ color: "red" }}>Test</h1>;
 }
 
-export default App;
