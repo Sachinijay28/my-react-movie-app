@@ -23,6 +23,6 @@ export const getGenres = () => api.get("/genre/movie/list");
 export const discoverMovies = (params) =>
   api.get("/discover/movie", { params });
 
-// Builds a full image URL from TMDb's partial path
-export const posterUrl = (path, size = "w342") =>
-  path ? `https://image.tmdb.org/t/p/${size}${path}` : "/placeholder.png";
+// TMDb returns partial image paths; build the full URL (null if no image)
+export const imageUrl = (path, size = "w342") =>
+  path ? `https://image.tmdb.org/t/p/${size}${path}` : null;
