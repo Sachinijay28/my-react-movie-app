@@ -1,70 +1,119 @@
-# Getting Started with Create React App
+# 🎬 Movie Explorer
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A React web app to search movies, browse trending films, view details and trailers, and save favorites, powered by the TMDb API.
 
-## Available Scripts
+**Live demo:** my-movie-explorer-app.netlify.app
 
-In the project directory, you can run:
+**Source code:** https://gitlab.com/personal-group9644440/my-react-movie-app
 
-### `npm start`
+## Demo login
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- Username: `admin`
+- Password: `password123`
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Authentication is simulated on the client because the task has no backend. The session is stored in localStorage.
 
-### `npm test`
+## Screenshots
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+| Login                           | Home (Trending)               |
+| ------------------------------- | ----------------------------- |
+| ![Login](screenshots/login.png) | ![Home](screenshots/home.png) |
 
-### `npm run build`
+| Home (Load More)                 | Search                            |
+| -------------------------------- | --------------------------------- |
+| ![Home 2](screenshots/home1.png) | ![Search](screenshots/search.png) |
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+| Movie details                       | Trailer                                   |
+| ----------------------------------- | ----------------------------------------- |
+| ![Details](screenshots/details.png) | ![Trailer](screenshots/movie_trailer.png) |
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+| Favorites                               | Dark mode                               |
+| --------------------------------------- | --------------------------------------- |
+| ![Favorites](screenshots/favorites.png) | ![Dark mode](screenshots/dark-mode.png) |
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Filtered results
 
-### `npm run eject`
+![Filtered](screenshots/filtered.png)
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Features
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+**Required**
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- Login page with validation and protected routes
+- Trending movies from TMDb
+- Debounced movie search with infinite scrolling
+- Movie grid showing poster, title, release year and rating
+- Movie details page: overview, genres, cast, runtime, rating and trailer
+- Light/dark mode (remembered between visits)
+- Favorites list saved in localStorage
+- Last searched movie saved in localStorage and restored on reload
+- State management with the React Context API
+- Friendly error handling (network errors, no results, movie not found)
+- Mobile-first responsive design
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+**Bonus**
 
-## Learn More
+- Filter by genre, year and minimum rating
+- "Load More" button on the trending section
+- Embedded YouTube trailers
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Tech stack
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+React (Create React App), Material-UI (MUI), React Router, Axios, TMDb API. Deployed on Netlify.
 
-### Code Splitting
+## Setup
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+1. Clone the repository and install dependencies:
 
-### Analyzing the Bundle Size
+```bash
+   npm install
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+2. Copy `.env.example` to `.env` and add your TMDb **API Read Access Token** (TMDb → Settings → API):
 
-### Making a Progressive Web App
+```
+   REACT_APP_TMDB_TOKEN=your_token_here
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+3. Start the app:
 
-### Advanced Configuration
+```bash
+   npm start
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+4. Open http://localhost:3000
 
-### Deployment
+## TMDb API usage
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+| Purpose                    | Endpoint                                            |
+| -------------------------- | --------------------------------------------------- |
+| Trending movies            | `GET /trending/movie/week`                          |
+| Search                     | `GET /search/movie`                                 |
+| Details, cast and trailers | `GET /movie/{id}?append_to_response=credits,videos` |
+| Genre list                 | `GET /genre/movie/list`                             |
+| Filtered browsing          | `GET /discover/movie`                               |
 
-### `npm run build` fails to minify
+Requests go through a shared Axios instance (`src/api/tmdb.js`) using a Bearer token. Images are loaded from `https://image.tmdb.org/t/p/`.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Project structure
+
+```
+src/
+├── api/         TMDb requests and image URL helper
+├── context/     ThemeContext, AuthContext, MovieContext
+├── components/  MovieCard, MovieGrid, SearchBar, Filters, Navbar, ErrorMessage, ProtectedRoute
+├── hooks/       useInfiniteScroll
+└── pages/       Login, Home, MovieDetails, Favorites
+```
+
+## Design decisions and notes
+
+- The search input is debounced (500 ms) to avoid a request on every keystroke.
+- Infinite scroll uses the `IntersectionObserver` API.
+- Search and filter results use infinite scroll, while the trending section uses a "Load More" button.
+- The TMDb token is bundled into the frontend, so it is visible in the browser. This is acceptable for a demo; a production app would proxy requests through a backend.
+- Possible improvements: real authentication, unit tests, TV shows, request caching.
+
+---
+
+This product uses the TMDB API but is not endorsed or certified by TMDB.
